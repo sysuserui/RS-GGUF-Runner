@@ -3,27 +3,53 @@ name: Extract RS_GGUF_Runner
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   extract:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Create Android source structure
+      - name: Extract Android source
         run: |
+          rm -rf temp_extract
+          mkdir -p temp_extract
           mkdir -p RS_GGUF_Runner/app/src
+
           unzip -o "RS_GGUF_Runner.zip" -d temp_extract
+
+          if [ ! -d "temp_extract/main" ]; then
+            echo "ERROR: ZIP ke andar main folder nahi mila."
+            echo "ZIP structure:"
+            find temp_extract -maxdepth 3 -type f
+            exit 1
+          fi
+
+          rm -rf RS_GGUF_Runner/app/src/main
           mv temp_extract/main RS_GGUF_Runner/app/src/main
 
-      - name: Check source structure
-        run: |
-          echo "Android source extracted:"
-          find RS_GGUF_Runner/app/src/main -type f
+          rm -rf temp_extract
 
-      - name: Upload Android source
-        uses: actions/upload-artifact@v4
-        with:
-          name: RS_GGUF_Runner
-          path: RS_GGUF_Runner/
+      - name: Check extracted files
+        run: |
+          echo "===== Extracted Android Source ====="
+          find RS_GGUF_Runner/app/src/main -type f
+          echo "===================================="
+
+      - name: Commit extracted source
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add RS_GGUF_Runner
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Extract RS_GGUF_Runner Android source"
+            git push
+          fi
