@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- App's real theme, used after the splash screen finishes. Compose (via
+         MaterialTheme in MainActivity) supplies actual colors/typography at runtime;
+         this XML theme only needs to host a plain, non-ActionBar window for Compose
+         to draw into. -->
+    <style name="Theme.App" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- Splash screen theme (androidx.core.splashscreen). MainActivity's manifest entry
+         points here first; installSplashScreen() in MainActivity.onCreate() switches
+         the window to postSplashScreenTheme (Theme.App above) once
+         isInitialDataReady becomes true. -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+
+        <item name="android:windowSplashScreenBackground">#060C11</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.App</item>
+    </style>
+
+</resources>
