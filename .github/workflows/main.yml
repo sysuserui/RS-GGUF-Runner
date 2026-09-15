@@ -1,0 +1,29 @@
+name: Extract RS_GGUF_Runner
+
+on:
+  workflow_dispatch:
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create Android source structure
+        run: |
+          mkdir -p RS_GGUF_Runner/app/src
+          unzip -o "RS_GGUF_Runner.zip" -d temp_extract
+          mv temp_extract/main RS_GGUF_Runner/app/src/main
+
+      - name: Check source structure
+        run: |
+          echo "Android source extracted:"
+          find RS_GGUF_Runner/app/src/main -type f
+
+      - name: Upload Android source
+        uses: actions/upload-artifact@v4
+        with:
+          name: RS_GGUF_Runner
+          path: RS_GGUF_Runner/
